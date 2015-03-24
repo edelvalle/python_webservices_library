@@ -194,6 +194,7 @@ class QueryList:
         for key, val in list(query.items()):
             # Get the field and the operator from the query
             key_field, key_sep, key_oper = key.partition('__')
+            key_oper = key_oper or 'exact'
             if q_str != '':
                 q_str += ' AND '
 
