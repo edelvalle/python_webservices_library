@@ -1,13 +1,15 @@
 from __future__ import print_function
-import six
-from six.moves.html_parser import HTMLParser
+
 from collections import defaultdict
 from itertools import count
+
+import six
+from six.moves.html_parser import HTMLParser
+
 
 class SugarEntry:
     """Define an entry of a SugarCRM module."""
     _hashes = defaultdict(count(1).next if hasattr(count(1), 'next') else count(1).__next__)
-
 
     def __init__(self, module, fmap = None):
         """Represents a new or an existing entry.
@@ -39,7 +41,10 @@ class SugarEntry:
                     (self._module._name.rstrip('s'), self['name'])
 
     def __str__(self):
-        return str(self).encode('utf-8')
+        result = self.__unicode__()
+        if six.PY2:
+            result = result.encode('utf-8')
+        return result
 
     def __contains__(self, key):
         return key in self._module._fields
@@ -167,4 +172,3 @@ class SugarEntry:
             entries.append(entry)
 
         return entries
-

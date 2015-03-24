@@ -1,8 +1,17 @@
 from __future__ import unicode_literals
+
+import sys
 import itertools
-from six.moves.html_parser import HTMLParser
-from .sugarentry import SugarEntry
 from collections import deque
+
+from six.moves.html_parser import HTMLParser
+
+from .sugarentry import SugarEntry
+
+if sys.version > '3':
+    long = int
+    basestring = (str, bytes)
+    unicode = str
 
 HTMLP = HTMLParser()
 
@@ -70,9 +79,9 @@ class SugarModule:
                             total - len(entry_list), 0)
             if resp_data['total_count']:
                 try:
-                    result['total'] = int(resp_data['total_count'], 10)
-                except TypeError as e:
-                    print resp_data
+                    result['total'] = int(resp_data['total_count'])
+                except TypeError:
+                    print(resp_data)
             else:
                 result['total'] = 0
             if resp_data['result_count'] == 0:
@@ -88,7 +97,7 @@ class SugarModule:
                     entry[key] = HTMLP.unescape(val) if isinstance(val, basestring) else val
                 entry_list.append(entry)
 
-            if resp_data['result_count'] == int(resp_data['total_count'], 10):
+            if resp_data['result_count'] == int(resp_data['total_count']):
                 break
 
         result['entries'] = entry_list
@@ -256,5 +265,5 @@ class QueryList:
         if self._total == -1:
             result = self._module._connection.get_entries_count(self._module._name, self._query, 0)
 
-            self._total = int(result['result_count'], 10)
+            self._total = int(result['result_count'])
         return self._total
